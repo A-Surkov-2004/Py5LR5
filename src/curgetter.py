@@ -7,14 +7,7 @@ from xml.etree import \
 class CurrenciesLst():
 
     def __init__(self):
-        self.__cur_lst = [{
-            'GBP': ('Фунт стерлингов Соединенного королевства', '113,2069')
-        }, {
-            'KZT': ('Казахстанских тенге', '19,8264')
-        }, {
-            'TRY': ('Турецких лир', '33,1224')
-        }]
-
+        pass
 
 class Singleton(type):
     _instances = {}
