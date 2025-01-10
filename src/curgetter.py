@@ -1,4 +1,7 @@
 import time
+import requests
+from xml.etree import \
+    ElementTree as ET
 
 
 class CurrenciesLst():
@@ -13,19 +16,13 @@ class CurrenciesLst():
         }]
 
 
-
-
-
-
-
-
 class Singleton(type):
     _instances = {}
+
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
-
 
 
 class BaseClass:
@@ -50,19 +47,14 @@ class BaseClass:
     def set_delay(self, seconds):
         self.delay = seconds
 
-    def get_currencies(self) -> list:
+    def find(self, curs) -> list:
 
         if time.time() - self.last_time < self.delay:
             print(f'Please, wait {self.delay - (time.time() - self.last_time)} seconds')
             return [f'Please, wait {self.delay - (time.time() - self.last_time)} seconds']
         self.last_time = time.time()
 
-        currencies_ids_lst = self.tracking_currencies
-
-        import requests
-        from xml.etree import \
-            ElementTree as ET
-
+        currencies_ids_lst = curs
 
         cur_res_str = requests.get('http://www.cbr.ru/scripts/XML_daily.asp')
         result = []
@@ -82,43 +74,16 @@ class BaseClass:
                 valute[valute_charcode] = (valute_cur_name, int(value[0]), int(value[1]))
                 result.append(valute)
 
-        return result
-
-    def get_currency(self, currency_id : str) -> list:
-
-        if time.time() - self.last_time < self.delay:
-            print(f'Please, wait {self.delay - (time.time() - self.last_time)} seconds')
-            return [f'Please, wait {self.delay - (time.time() - self.last_time)} seconds']
-        self.last_time = time.time()
-
-
-        import requests
-        from xml.etree import \
-            ElementTree as ET
-
-        cur_res_str = requests.get('http://www.cbr.ru/scripts/XML_daily.asp')
-        result = []
-
-        root = ET.fromstring(cur_res_str.content)
-        valutes = root.findall(
-            "Valute"
-        )
-        for _v in valutes:
-            valute_id = _v.get('ID')
-            valute = {}
-            if str(valute_id) == currency_id:
-                valute_cur_name, valute_cur_val = _v.find('Name').text, _v.find(
-                    'Value').text
-                value = valute_cur_val.split(',')
-                valute_charcode = _v.find('CharCode').text
-                valute[valute_charcode] = (valute_cur_name, int(value[0]), int(value[1]))
-                result.append(valute)
-
         if len(result):
             return result
         else:
             return [{'R9999': None}]
 
+    def get_currencies(self) -> list:
+        return self.find(self.tracking_currencies)
+
+    def get_currency(self, currency_id: str) -> list:
+        return self.find(currency_id)
 
     def visualize_currencies(self):
         import matplotlib.pyplot as plt
@@ -130,13 +95,7 @@ class BaseClass:
         for el in cur_lst:
             key = str(el.keys())[12:15]
             currencies.append(key)
-            val.append(el[key][1]+el[key][2]/pow(10, len(str(el[key][2]))))
-
-
-
-        print(cur_lst)
-        fruits = ['a', 'blueberry', 'cherry', 'orange']
-        counts = [40, 100, 30, 55]
+            val.append(el[key][1] + el[key][2] / pow(10, len(str(el[key][2]))))
 
         ax.bar(currencies, val)
 
@@ -145,15 +104,8 @@ class BaseClass:
 
         plt.show()
 
-        # обращается к атрибуту __cur_lst, преобразовывать значения курсов валют в нужный формат и выводить эти данные в файл
 
-        cur_lst
-
-
-
-
-
-class MyClass(BaseClass, metaclass=Singleton):
+class CurGetter(BaseClass, metaclass=Singleton):
     pass
 
 
@@ -165,14 +117,14 @@ if __name__ == '__main__':
 
     #CurrenciesLst.visualize_currencies(get_currencies(['R01035', 'R01335', 'R01700J']))
 
-    mc = MyClass()
+    mc = CurGetter()
     mc.tracking_currencies = ['R01035', 'R01335', 'R01700J']
     print(mc.get_currencies())
     print(mc.get_currency('R01090B'))
     time.sleep(1)
     assert mc.get_currency('R01090A') == [{'R9999': None}]
 
-    mc2 = MyClass()
+    mc2 = CurGetter()
     mc2.delay = 0
 
     assert mc.get_currency('R01090B')[0]['BYN'][0] == 'Белорусский рубль'
