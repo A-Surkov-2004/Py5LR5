@@ -66,7 +66,7 @@ class BaseClass:
         for _v in valutes:
             valute_id = _v.get('ID')
             valute = {}
-            if (str(valute_id) in currencies_ids_lst):
+            if str(valute_id) in currencies_ids_lst:
                 valute_cur_name, valute_cur_val = _v.find('Name').text, _v.find(
                     'Value').text
                 value = valute_cur_val.split(',')
@@ -107,33 +107,6 @@ class BaseClass:
 
 class CurGetter(BaseClass, metaclass=Singleton):
     pass
-
-
-
-if __name__ == '__main__':
-
-    #res = get_currencies(['R01035', 'R01335', 'R01700J'])
-
-
-    #CurrenciesLst.visualize_currencies(get_currencies(['R01035', 'R01335', 'R01700J']))
-
-    mc = CurGetter()
-    mc.tracking_currencies = ['R01035', 'R01335', 'R01700J']
-    print(mc.get_currencies())
-    print(mc.get_currency('R01090B'))
-    time.sleep(1)
-    assert mc.get_currency('R01090A') == [{'R9999': None}]
-
-    mc2 = CurGetter()
-    mc2.delay = 0
-
-    assert mc.get_currency('R01090B')[0]['BYN'][0] == 'Белорусский рубль'
-
-    mc2.tracking_currencies = ['R01625', 'R01720', 'R01820']
-    assert mc.get_currencies()[2]['JPY'][0] == 'Японских иен'
-
-    mc.visualize_currencies()
-
 
 
 
