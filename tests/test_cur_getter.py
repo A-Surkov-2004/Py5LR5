@@ -47,8 +47,22 @@ def test3():
     print(ans2)
     assert (list(ans1[0].keys())) == ['GBP']
     assert type(ans2[0]) == str  # 'Please, wait n seconds'
+    mc1.delay = 0
 
+
+def test4():
+    # given
+    mc = src.curgetter.CurGetter()
+    mc.delay = 0
+    mc.tracking_currencies = ['R01035', 'R01335', 'R01700J']
+
+    # when
+    ans = mc.get_currencies()
+
+    # then
+    mc.visualize_currencies()
 
 test1()
 test2()
 test3()
+test4()

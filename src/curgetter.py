@@ -4,10 +4,11 @@ from xml.etree import \
     ElementTree as ET
 
 
-class CurrenciesLst():
+class CurrenciesLst:
 
     def __init__(self):
         pass
+
 
 class Singleton(type):
     _instances = {}
