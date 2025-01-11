@@ -17,3 +17,6 @@
 
 Пример визуализации курсов валют представлен ниже:
 ![image](https://github.com/user-attachments/assets/01f522ba-aa88-41ac-8713-cc51413186c9)
+
+
+[Реализация паттерна "Одиночка" (Singleton) для логгера, который записывает сообщения в файл](https://github.com/A-Surkov-2004/Py5dop)
